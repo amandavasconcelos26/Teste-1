@@ -214,7 +214,7 @@ export default function FleetList() {
                         className="w-full bg-white/5 border border-white/5 px-4 py-3 text-sm text-white focus:outline-none focus:border-rose-500 transition-colors uppercase appearance-none"
                       >
                         <option value="Heavy" className="bg-[#0a0a0a]">Pesado (Bitrem)</option>
-                        <option value="Truck" className="bg-[#0a0a0a]">Pesado (Truck)</option>
+                        <option value="Truck" className="bg-[#0a0a0a]">Médio (Truck)</option>
                         <option value="Medium" className="bg-[#0a0a0a]">Médio (Toco)</option>
                         <option value="Light" className="bg-[#0a0a0a]">Leve (VUC)</option>
                       </select>
