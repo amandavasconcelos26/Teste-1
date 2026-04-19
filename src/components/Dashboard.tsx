@@ -26,12 +26,28 @@ import { DashboardStats } from '../types';
 
 export default function Dashboard() {
   const [stats, setStats] = React.useState<DashboardStats | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch('/api/dashboard')
-      .then(res => res.json())
-      .then(setStats);
+      .then(res => {
+        if (!res.ok) throw new Error('API não acessível');
+        return res.json();
+      })
+      .then(setStats)
+      .catch(err => {
+        console.error(err);
+        setError("FALHA_NA_CONEXÃO_COM_NÚCLEO");
+      });
   }, []);
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center h-[60vh] text-rose-500 font-mono tracking-tighter uppercase gap-4">
+      <Zap size={32} className="text-rose-600 animate-pulse" />
+      <span>{error}</span>
+      <span className="text-[10px] text-slate-500">VERIFIQUE_STATUS_SERVIDOR</span>
+    </div>
+  );
 
   if (!stats) return (
     <div className="flex flex-col items-center justify-center h-[60vh] text-rose-500 font-mono tracking-tighter uppercase gap-4">

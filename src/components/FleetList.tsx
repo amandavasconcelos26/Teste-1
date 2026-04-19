@@ -19,8 +19,12 @@ export default function FleetList() {
 
   const fetchTrucks = React.useCallback(() => {
     fetch('/api/trucks')
-      .then(res => res.json())
-      .then(setTrucks);
+      .then(res => {
+        if (!res.ok) throw new Error('API não acessível');
+        return res.json();
+      })
+      .then(setTrucks)
+      .catch(err => console.error("FALHA_AO_CARREGAR_FROTA:", err));
   }, []);
 
   React.useEffect(() => {
