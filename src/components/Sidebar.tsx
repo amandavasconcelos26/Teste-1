@@ -30,10 +30,6 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'expenses', label: 'FINANCEIRO', icon: Receipt },
   ];
 
-  if (isAdmin) {
-    menuItems.push({ id: 'users', label: 'SISTEMA', icon: ShieldAlert });
-  }
-
   return (
     <>
       <div 

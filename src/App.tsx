@@ -62,8 +62,6 @@ export default function App() {
         return <Operations />;
       case 'expenses':
         return <Finance />;
-      case 'users':
-        return <UserManagement />;
       case 'analysis':
         return (
           <div className="flex flex-col items-center justify-center h-[60vh] text-slate-500 font-mono tracking-tighter uppercase gap-4 text-sm animate-pulse">
