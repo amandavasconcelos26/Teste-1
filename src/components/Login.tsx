@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Lock, ShieldAlert, Cpu, TerminalSquare } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { api } from '../lib/api';
 
 interface LoginProps {
   onLogin: () => void;
@@ -18,16 +19,16 @@ export default function Login({ onLogin }: LoginProps) {
     setError('');
     setIsLoading(true);
 
-    // Simulated verification delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
-
-    // Hardcoded Admin Credentials
-    if (username.toLowerCase() === 'amanda' && password === 'comando88') {
+    try {
+      const user = await api.verifyLogin(username, password);
       localStorage.setItem('frota_auth_token', 'AUTH_LEVEL_01_APPROVED');
+      localStorage.setItem('frota_current_username', user.username);
+      localStorage.setItem('frota_current_userid', user.id);
       onLogin();
-    } else {
-      setError('ERRO: CREDENCIAIS_INVÁLIDAS OU ACESSO_NEGADO');
+    } catch (err: any) {
+      setError('ERRO: CREDENCIAIS INVÁLIDAS OU ACESSO NEGADO');
       setPassword('');
+    } finally {
       setIsLoading(false);
     }
   };

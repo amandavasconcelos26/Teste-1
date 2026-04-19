@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck as TruckIcon, Save, X, Plus, Zap, Settings, Activity, Trash2 } from 'lucide-react';
+import { Truck as TruckIcon, Save, X, Plus, Zap, Settings, Activity, Trash2, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatCurrency, formatNumber, cn } from '../lib/utils';
 import { Truck } from '../types';
@@ -10,6 +10,7 @@ export default function FleetList() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
   
   const [viewingTruckId, setViewingTruckId] = React.useState<string | null>(null);
 
@@ -25,7 +26,7 @@ export default function FleetList() {
   const fetchTrucks = React.useCallback(() => {
     api.getTrucks()
       .then(setTrucks)
-      .catch(err => console.error("FALHA_AO_CARREGAR_FROTA:", err));
+      .catch(err => console.error("FALHA AO CARREGAR FROTA:", err));
   }, []);
 
   React.useEffect(() => {
@@ -41,23 +42,22 @@ export default function FleetList() {
       setFormData({ plaque: '', model: '', brand: '', year: new Date().getFullYear(), type: 'Heavy', capacity: '' });
       fetchTrucks();
     } catch (error) {
-      console.error("FAILED_TO_REGISTER_ASSET:", error);
+      console.error("FALHA AO REGISTRAR ATIVO:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("ATENÇÃO: Deseja realmente excluir este ativo operacinal da frota?")) {
-      setDeletingId(id);
-      try {
-        await api.deleteTruck(id);
-        fetchTrucks();
-      } catch (error) {
-        console.error("FAILED_TO_DELETE_ASSET:", error);
-      } finally {
-        setDeletingId(null);
-      }
+  const executeDelete = async (id: string) => {
+    setDeletingId(id);
+    setConfirmDeleteId(null);
+    try {
+      await api.deleteTruck(id);
+      fetchTrucks();
+    } catch (error) {
+      console.error("FALHA AO DELETAR ATIVO:", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -65,8 +65,8 @@ export default function FleetList() {
     <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-700">
       <div className="flex justify-between items-end border-b border-white/5 pb-8">
         <div>
-          <h1 className="text-[10px] font-black tracking-[0.4em] text-rose-500 uppercase mb-2">SISTEMA_DE_INVENTÁRIO_DE_ATIVOS</h1>
-          <h2 className="text-4xl font-black text-white tracking-tighter">FROTA::UNIDADES_ATIVAS</h2>
+          <h1 className="text-[10px] font-black tracking-[0.4em] text-rose-500 uppercase mb-2">SISTEMA DE INVENTÁRIO DE ATIVOS</h1>
+          <h2 className="text-4xl font-black text-white tracking-tighter">FROTA :: UNIDADES ATIVAS</h2>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -83,11 +83,11 @@ export default function FleetList() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5 shadow-2xl">
         {trucks.map((truck) => (
           <div key={truck.id} className="bg-[#050505] group relative overflow-hidden p-8 transition-colors hover:bg-white/[0.02]">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity pointer-events-none">
               <span className="text-[40px] font-black text-white/5 font-mono">{truck.plaque.split('-')[1] || '000'}</span>
             </div>
             
-            <div className="flex flex-col gap-8 h-full">
+            <div className="flex flex-col gap-8 h-full relative z-10">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-rose-500/50 transition-colors">
@@ -102,24 +102,24 @@ export default function FleetList() {
                   "text-[8px] font-black tracking-[0.2em] px-2 py-1 uppercase border",
                   truck.status === 'Active' ? "border-emerald-500/50 text-emerald-500 bg-emerald-500/5" : "border-amber-500/50 text-amber-500 bg-amber-500/5"
                 )}>
-                  {truck.status === 'Active' ? 'OPERACIONAL' : 'EM_MANUTENÇÃO'}
+                  {truck.status === 'Active' ? 'OPERACIONAL' : 'EM MANUTENÇÃO'}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-px bg-white/5 border border-white/5">
                 <div className="bg-[#050505] p-4 flex flex-col gap-1">
-                  <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest leading-none">REC_GERADA</span>
+                  <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest leading-none">RECEITA GERADA</span>
                   <span className="text-lg font-black text-white leading-none">{formatCurrency(truck.revenue || 0)}</span>
                 </div>
                 <div className="bg-[#050505] p-4 flex flex-col gap-1">
-                  <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest leading-none">CARGA_DE_CUSTOS</span>
+                  <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest leading-none">CARGA DE CUSTOS</span>
                   <span className="text-lg font-black text-rose-500 leading-none">{formatCurrency(truck.expenses || 0)}</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-end mt-auto">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[8px] font-mono text-slate-700 tracking-widest">DELTA_RESULTADO_LÍQUIDO</span>
+                  <span className="text-[8px] font-mono text-slate-700 tracking-widest">DELTA DO RESULTADO LÍQUIDO</span>
                   <div className={cn(
                     "text-3xl font-black tracking-tighter",
                     (truck.profit || 0) >= 0 ? "text-emerald-500" : "text-rose-600"
@@ -127,7 +127,12 @@ export default function FleetList() {
                     {formatCurrency(truck.profit || 0)}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 relative">
+                  {confirmDeleteId === truck.id && (
+                    <div className="absolute bottom-full right-0 mb-2 whitespace-nowrap bg-rose-600 text-white text-[10px] font-black tracking-widest px-3 py-2 animate-in slide-in-from-bottom-2">
+                      CONFIRMAR EXCLUSÃO?
+                    </div>
+                  )}
                   <button 
                     onClick={() => setViewingTruckId(truck.id)}
                     className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn"
@@ -136,15 +141,25 @@ export default function FleetList() {
                     <Activity size={14} className="text-slate-600 group-hover/btn:text-white" />
                   </button>
                   <button 
-                    onClick={() => handleDelete(truck.id!)}
+                    onClick={() => {
+                      if (confirmDeleteId === truck.id) {
+                        executeDelete(truck.id!);
+                      } else {
+                        setConfirmDeleteId(truck.id!);
+                        setTimeout(() => setConfirmDeleteId(null), 3000);
+                      }
+                    }}
                     disabled={deletingId === truck.id}
-                    className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn disabled:opacity-50"
+                    className={cn(
+                      "w-8 h-8 flex items-center justify-center transition-colors group/btn disabled:opacity-50",
+                      confirmDeleteId === truck.id ? "bg-rose-600 text-white" : "bg-white/5 hover:bg-rose-600"
+                    )}
                     title="Descomissionar Ativo"
                   >
                     {deletingId === truck.id ? (
-                      <div className="w-3 h-3 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <Trash2 size={14} className="text-slate-600 group-hover/btn:text-white" />
+                      confirmDeleteId === truck.id ? <AlertTriangle size={14} /> : <Trash2 size={14} className={cn("text-slate-600 group-hover/btn:text-white")} />
                     )}
                   </button>
                 </div>

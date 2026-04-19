@@ -1,6 +1,9 @@
 import { DashboardStats, Truck, Driver, Trip, Expense } from '../types';
 
 const INITIAL_DATA = {
+  users: [
+    { id: "1", username: "Amanda", password: "comando88", role: "admin" }
+  ],
   trucks: [
     { id: "1", plaque: "ABC-1234", model: "Scania R450", brand: "Scania", year: 2022, type: "Heavy", capacity: "40T", status: "Active" },
     { id: "2", plaque: "XYZ-5678", model: "Volvo FH 540", brand: "Volvo", year: 2021, type: "Heavy", capacity: "45T", status: "Active" },
@@ -12,8 +15,8 @@ const INITIAL_DATA = {
     { id: "2", name: "Maria Oliveira", license: "987654321", category: "E", status: "Active" },
   ],
   trips: [
-    { id: "101", tripNumber: "V001", truckId: "1", driverId: "1", origin: "São Paulo", destination: "Curitiba", dateOut: "2024-03-01", dateIn: "2024-03-03", kmInitial: 10000, kmFinal: 10450, freightValue: 5500, status: "Completed" },
-    { id: "102", tripNumber: "V002", truckId: "2", driverId: "2", origin: "Santos", destination: "Belo Horizonte", dateOut: "2024-03-05", dateIn: "2024-03-08", kmInitial: 15000, kmFinal: 15600, freightValue: 7200, status: "Completed" },
+    { id: "101", tripNumber: "V001", truckId: "1", driverId: "1", origin: "Palmeira dos Índios", destination: "Quebrangulo", dateOut: "2024-03-01", dateIn: "2024-03-03", kmInitial: 10000, kmFinal: 10050, freightValue: 5500, status: "Completed" },
+    { id: "102", tripNumber: "V002", truckId: "2", driverId: "2", origin: "Viçosa", destination: "Mar Vermelho", dateOut: "2024-03-05", dateIn: "2024-03-08", kmInitial: 15000, kmFinal: 15040, freightValue: 3200, status: "Completed" },
   ],
   expenses: [
     { id: "e1", truckId: "1", tripId: "101", category: "Fuel", date: "2024-03-01", value: 1200 },
@@ -119,5 +122,53 @@ export const api = {
     // Also cleanup related trips and expenses if this were a full DB, 
     // but for now we just remove the truck
     saveData(data);
+  },
+
+  async getUsers() {
+    await delay(400);
+    return getData().users || [];
+  },
+
+  async addUser(user: any) {
+    await delay(600);
+    const data = getData();
+    const newUser = {
+      ...user,
+      id: Math.random().toString(36).substring(2, 9),
+      role: user.role || 'user'
+    };
+    if (!data.users) data.users = [];
+    data.users.push(newUser);
+    saveData(data);
+    return newUser;
+  },
+
+  async updateUser(id: string, updates: any) {
+    await delay(600);
+    const data = getData();
+    if (!data.users) data.users = [];
+    data.users = data.users.map((u: any) => u.id === id ? { ...u, ...updates } : u);
+    saveData(data);
+  },
+
+  async deleteUser(id: string) {
+    await delay(400);
+    const data = getData();
+    if (!data.users) data.users = [];
+    data.users = data.users.filter((u: any) => u.id !== id);
+    saveData(data);
+  },
+
+  async verifyLogin(username: string, password: string):Promise<any> {
+    await delay(800);
+    const data = getData();
+    if (!data.users) data.users = [{ id: "1", username: "Amanda", password: "comando88", role: "admin" }];
+    saveData(data);
+    
+    const user = data.users.find((u: any) => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+    if (!user) {
+      throw new Error("CREDENCIAIS_INVÁLIDAS");
+    }
+    return user;
   }
 };

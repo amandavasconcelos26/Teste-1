@@ -6,7 +6,8 @@ import {
   MapPin, 
   Receipt, 
   TrendingUp, 
-  ChevronRight
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -25,7 +26,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'trips', label: 'OPERAÇÕES', icon: MapPin },
     { id: 'drivers', label: 'EQUIPE', icon: Users },
     { id: 'expenses', label: 'FINANCEIRO', icon: Receipt },
-    { id: 'analysis', label: 'ESTRATÉGIA', icon: TrendingUp },
+    { id: 'users', label: 'SISTEMA', icon: ShieldAlert },
   ];
 
   return (

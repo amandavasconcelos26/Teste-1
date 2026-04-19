@@ -8,6 +8,9 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import FleetList from './components/FleetList';
 import CrewManagement from './components/CrewManagement';
+import Operations from './components/Operations';
+import Finance from './components/Finance';
+import UserManagement from './components/UserManagement';
 import Login from './components/Login';
 import { Search, Bell, User } from 'lucide-react';
 
@@ -30,17 +33,23 @@ export default function App() {
       case 'drivers':
         return <CrewManagement />;
       case 'trips':
+        return <Operations />;
       case 'expenses':
+        return <Finance />;
+      case 'users':
+        return <UserManagement />;
       case 'analysis':
         return (
           <div className="flex flex-col items-center justify-center h-[60vh] text-slate-500 font-mono tracking-tighter uppercase gap-4 text-sm animate-pulse">
-            <span>[ CONSTRUINDO_MÓDULO : {activeTab} ]</span>
+            <span>[ CONSTRUINDO MÓDULO ANÁLISE ESTRATÉGICA ]</span>
           </div>
         );
       default:
         return <Dashboard />;
     }
   };
+
+  const username = localStorage.getItem('frota_current_username') || 'ADMIN';
 
   return (
     <div className="min-h-screen bg-[#050505] font-sans text-slate-300 selection:bg-rose-500 selection:text-white relative">
@@ -54,7 +63,7 @@ export default function App() {
           <div className="flex items-center gap-6 flex-1">
             <div className="hidden md:flex items-center gap-2 text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">
               <div className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
-              TERMINAL_NODE_ACTIVE
+              TERMINAL NODE ACTIVE
             </div>
             <div className="h-4 w-px bg-white/10 hidden md:block"></div>
             <div className="flex items-center gap-2 text-[10px] font-mono text-slate-600 uppercase tracking-tighter">
@@ -65,7 +74,7 @@ export default function App() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-[10px] font-black text-white tracking-widest uppercase">COMMANDER_AV</p>
+                <p className="text-[10px] font-black text-white tracking-widest uppercase">{username}</p>
                 <p className="text-[9px] font-mono text-rose-500 tracking-tighter uppercase opacity-70">AUTH_LEVEL_01</p>
               </div>
               <div className="w-8 h-8 rounded-sm bg-rose-600 overflow-hidden ring-1 ring-rose-500/50">

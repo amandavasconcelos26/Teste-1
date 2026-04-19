@@ -118,15 +118,15 @@ export default function Dashboard() {
             <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">04 // OPS::ESTADO</span>
             <div className="mt-8 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">FROTA_ATIVA</span>
+                <span className="text-xs font-bold text-slate-400">FROTA ATIVA</span>
                 <span className="text-xl font-black text-white">{stats.activeTrucks} / 4</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">ID_MANUTENÇÃO</span>
+                <span className="text-xs font-bold text-slate-400">ID MANUTENÇÃO</span>
                 <span className="text-xl font-black text-amber-500">PROT-99X</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">TEMPO_ATIVO_SIS</span>
+                <span className="text-xs font-bold text-slate-400">TEMPO ATIVO SIS</span>
                 <span className="text-xs font-mono text-emerald-500 tracking-widest">99.98%</span>
               </div>
             </div>
@@ -138,11 +138,11 @@ export default function Dashboard() {
           <div className="flex justify-between items-center mb-12">
             <div className="flex items-center gap-3">
               <TrendingUp size={16} className="text-rose-500" />
-              <span className="text-xs font-black tracking-[0.2em] text-white uppercase font-sans">VOLUMETRIA_PERFORMANCE_MOTOR</span>
+              <span className="text-xs font-black tracking-[0.2em] text-white uppercase font-sans">VOLUMETRIA PERFORMANCE MOTOR</span>
             </div>
             <div className="flex gap-4">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase"><span className="w-1 h-1 bg-rose-500 rounded-full" /> REC_IN</div>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase"><span className="w-1 h-1 bg-slate-700 rounded-full" /> DESP_OUT</div>
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase"><span className="w-1 h-1 bg-rose-500 rounded-full" /> REC IN</div>
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase"><span className="w-1 h-1 bg-slate-700 rounded-full" /> DESP OUT</div>
             </div>
           </div>
           <div className="h-[300px]">
@@ -192,12 +192,12 @@ export default function Dashboard() {
 
         {/* Cost Matrix Area */}
         <div className="col-span-12 lg:col-span-4 bg-[#050505] p-10 border-t border-white/5 border-l border-white/5">
-          <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-8 block">05 // MATRIZ_DE_CUSTOS</span>
+          <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-8 block">05 // MATRIZ DE CUSTOS</span>
           <div className="space-y-4">
             {[
-              { label: 'CUSTO_COMBÚSTIVEL', value: 45, color: 'bg-rose-600' },
-              { label: 'FOLHA_EQUIPE', value: 35, color: 'bg-rose-900' },
-              { label: 'MANUTENÇÃO_PREV', value: 20, color: 'bg-white/10' },
+              { label: 'CUSTO COMBÚSTIVEL', value: 45, color: 'bg-rose-600' },
+              { label: 'FOLHA EQUIPE', value: 35, color: 'bg-rose-900' },
+              { label: 'MANUTENÇÃO PREV', value: 20, color: 'bg-white/10' },
             ].map((c, i) => (
               <div key={i} className="group cursor-pointer">
                 <div className="flex justify-between items-end mb-2">
