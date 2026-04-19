@@ -1,20 +1,16 @@
 import React from 'react';
-import { ShieldAlert, Users, Plus, X, Zap, BadgeCheck, LockKeyhole } from 'lucide-react';
+import { Users, Plus, X, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { Driver } from '../types';
 
 import { api } from '../lib/api';
-import UserManagement from './UserManagement';
 
 export default function CrewManagement() {
   const [drivers, setDrivers] = React.useState<Driver[]>([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
-  const isAdmin = localStorage.getItem('frota_current_role') === 'admin';
-  const [activeSubTab, setActiveSubTab] = React.useState<'drivers' | 'users'>('drivers');
-
   const [formData, setFormData] = React.useState({
     name: '',
     license: '',
@@ -47,96 +43,62 @@ export default function CrewManagement() {
       <div className="flex justify-between items-end border-b border-white/5 pb-8">
         <div>
           <h1 className="text-[10px] font-black tracking-[0.4em] text-emerald-500 uppercase mb-2">GERENCIAMENTO ESTRATÉGICO</h1>
-          <h2 className="text-4xl font-black text-white tracking-tighter">EQUIPE :: PESSOAL E ACESSOS</h2>
+          <h2 className="text-4xl font-black text-white tracking-tighter">EQUIPE :: LISTA DE MOTORES</h2>
         </div>
-        {activeSubTab === 'drivers' && (
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-emerald-600 hover:text-white transition-all duration-300"
-          >
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500" />
-            <span className="flex items-center gap-3">
-              <Plus size={14} strokeWidth={3} />
-              ADICIONAR MOTORISTA
-            </span>
-          </button>
-        )}
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-emerald-600 hover:text-white transition-all duration-300"
+        >
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500" />
+          <span className="flex items-center gap-3">
+            <Plus size={14} strokeWidth={3} />
+            ADICIONAR MOTORISTA
+          </span>
+        </button>
       </div>
 
-      {isAdmin && (
-        <div className="flex gap-4 border-b border-white/5 pb-4">
-          <button 
-            onClick={() => setActiveSubTab('drivers')}
-            className={cn(
-              "px-6 py-3 text-xs font-black tracking-[0.2em] transition-colors border",
-              activeSubTab === 'drivers' 
-                ? "bg-emerald-600/10 text-emerald-500 border-emerald-500/50" 
-                : "bg-white/5 text-slate-500 border-transparent hover:text-white"
-            )}
-          >
-            MOTORISTAS (FROTA)
-          </button>
-          <button 
-            onClick={() => setActiveSubTab('users')}
-            className={cn(
-              "px-6 py-3 text-xs font-black tracking-[0.2em] transition-colors border flex items-center gap-2",
-              activeSubTab === 'users' 
-                ? "bg-rose-600/10 text-rose-500 border-rose-500/50" 
-                : "bg-white/5 text-slate-500 border-transparent hover:text-white"
-            )}
-          >
-            <ShieldAlert size={14} />
-            USUÁRIOS DE SISTEMA
-          </button>
-        </div>
-      )}
-
-      {activeSubTab === 'users' ? (
-        <UserManagement />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/5 shadow-2xl">
-          {drivers.map((driver) => (
-            <div key={driver.id} className="bg-[#050505] p-6 hover:bg-white/[0.02] transition-colors relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                <span className="text-4xl font-black text-white/5 font-mono">{driver.id}</span>
-              </div>
-              
-              <div className="flex flex-col gap-6 relative z-10">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-slate-900 border border-white/10 flex items-center justify-center">
-                      <Users size={16} className="text-emerald-500" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-white tracking-tight uppercase truncate">{driver.name}</h3>
-                      <div className={cn(
-                        "text-[8px] font-black tracking-[0.2em] px-2 py-0.5 uppercase mt-1 inline-block",
-                        driver.status === 'Active' ? "text-emerald-500 bg-emerald-500/10" : "text-slate-500 bg-slate-800"
-                      )}>
-                        {driver.status === 'Active' ? 'ATIVO' : 'DESLIGADO'}
-                      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/5 shadow-2xl">
+        {drivers.map((driver) => (
+          <div key={driver.id} className="bg-[#050505] p-6 hover:bg-white/[0.02] transition-colors relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+              <span className="text-4xl font-black text-white/5 font-mono">{driver.id}</span>
+            </div>
+            
+            <div className="flex flex-col gap-6 relative z-10">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-slate-900 border border-white/10 flex items-center justify-center">
+                    <Users size={16} className="text-emerald-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white tracking-tight uppercase truncate">{driver.name}</h3>
+                    <div className={cn(
+                      "text-[8px] font-black tracking-[0.2em] px-2 py-0.5 uppercase mt-1 inline-block",
+                      driver.status === 'Active' ? "text-emerald-500 bg-emerald-500/10" : "text-slate-500 bg-slate-800"
+                    )}>
+                      {driver.status === 'Active' ? 'ATIVO' : 'DESLIGADO'}
                     </div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
-                   <div>
-                     <p className="text-[10px] font-black text-slate-600 tracking-widest uppercase">CNH</p>
-                     <p className="text-sm font-mono text-slate-300 mt-1">{driver.license}</p>
-                   </div>
-                   <div>
-                     <p className="text-[10px] font-black text-slate-600 tracking-widest uppercase">CATEGORIA</p>
-                     <p className="text-sm font-black text-white mt-1 border border-white/10 px-2 py-0.5 inline-block bg-white/5">{driver.category}</p>
-                   </div>
-                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+                 <div>
+                   <p className="text-[10px] font-black text-slate-600 tracking-widest uppercase">CNH</p>
+                   <p className="text-sm font-mono text-slate-300 mt-1">{driver.license}</p>
+                 </div>
+                 <div>
+                   <p className="text-[10px] font-black text-slate-600 tracking-widest uppercase">CATEGORIA</p>
+                   <p className="text-sm font-black text-white mt-1 border border-white/10 px-2 py-0.5 inline-block bg-white/5">{driver.category}</p>
+                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
 
       <AnimatePresence>
-        {isModalOpen && activeSubTab === 'drivers' && (
+        {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }}

@@ -122,7 +122,10 @@ export const api = {
   },
 
   async updateUser(id: string, updates: any) {
-    await updateDoc(doc(db, 'users', id), updates);
+    console.log("ATUALIZANDO_USUARIO_ID:", id, "DADOS:", updates);
+    const userRef = doc(db, 'users', id);
+    await updateDoc(userRef, updates);
+    console.log("USUARIO_ATUALIZADO_COM_SUCESSO");
   },
 
   async deleteUser(id: string) {

@@ -28,6 +28,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'trips', label: 'OPERAÇÕES', icon: MapPin },
     { id: 'drivers', label: 'EQUIPE', icon: Users },
     { id: 'expenses', label: 'FINANCEIRO', icon: Receipt },
+    { id: 'users', label: 'SISTEMA', icon: ShieldAlert },
   ];
 
   return (
