@@ -1,10 +1,6 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
@@ -90,6 +86,16 @@ async function startServer() {
 
   app.get("/api/trips", (req, res) => res.json(data.trips));
   app.get("/api/drivers", (req, res) => res.json(data.drivers));
+  
+  app.post("/api/drivers", (req, res) => {
+    const newDriver = {
+      ...req.body,
+      id: Math.random().toString(36).substring(2, 9),
+      status: req.body.status || "Active"
+    };
+    data.drivers.push(newDriver);
+    res.status(201).json(newDriver);
+  });
 
   // Vite middleware
   if (process.env.NODE_ENV !== "production") {
@@ -99,7 +105,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(__dirname, "dist");
+    const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));

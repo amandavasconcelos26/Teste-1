@@ -24,16 +24,14 @@ import {
 import { formatCurrency, cn } from '../lib/utils';
 import { DashboardStats } from '../types';
 
+import { api } from '../lib/api';
+
 export default function Dashboard() {
   const [stats, setStats] = React.useState<DashboardStats | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch('/api/dashboard')
-      .then(res => {
-        if (!res.ok) throw new Error('API não acessível');
-        return res.json();
-      })
+    api.getDashboard()
       .then(setStats)
       .catch(err => {
         console.error(err);

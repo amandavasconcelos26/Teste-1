@@ -3,6 +3,7 @@ import { Truck as TruckIcon, Save, X, Plus, Zap, Settings, Activity } from 'luci
 import { motion, AnimatePresence } from 'motion/react';
 import { formatCurrency, formatNumber, cn } from '../lib/utils';
 import { Truck } from '../types';
+import { api } from '../lib/api';
 
 export default function FleetList() {
   const [trucks, setTrucks] = React.useState<Truck[]>([]);
@@ -18,11 +19,7 @@ export default function FleetList() {
   });
 
   const fetchTrucks = React.useCallback(() => {
-    fetch('/api/trucks')
-      .then(res => {
-        if (!res.ok) throw new Error('API não acessível');
-        return res.json();
-      })
+    api.getTrucks()
       .then(setTrucks)
       .catch(err => console.error("FALHA_AO_CARREGAR_FROTA:", err));
   }, []);
@@ -35,16 +32,10 @@ export default function FleetList() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/trucks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setIsModalOpen(false);
-        setFormData({ plaque: '', model: '', brand: '', year: new Date().getFullYear(), type: 'Heavy', capacity: '' });
-        fetchTrucks();
-      }
+      await api.addTruck(formData);
+      setIsModalOpen(false);
+      setFormData({ plaque: '', model: '', brand: '', year: new Date().getFullYear(), type: 'Heavy', capacity: '' });
+      fetchTrucks();
     } catch (error) {
       console.error("FAILED_TO_REGISTER_ASSET:", error);
     } finally {

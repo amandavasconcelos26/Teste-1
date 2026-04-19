@@ -7,6 +7,7 @@ import React from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import FleetList from './components/FleetList';
+import CrewManagement from './components/CrewManagement';
 import { Search, Bell, User } from 'lucide-react';
 
 export default function App() {
@@ -18,17 +19,14 @@ export default function App() {
         return <Dashboard />;
       case 'fleet':
         return <FleetList />;
-      case 'trips':
       case 'drivers':
+        return <CrewManagement />;
+      case 'trips':
       case 'expenses':
       case 'analysis':
         return (
-          <div className="flex flex-col items-center justify-center h-[60vh] text-slate-400 space-y-4">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center">
-              <Search size={32} />
-            </div>
-            <p className="text-lg font-medium">Módulo "{activeTab}" em desenvolvimento.</p>
-            <p className="text-sm">Clique em Dashboard ou Frota para ver a demonstração.</p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-slate-500 font-mono tracking-tighter uppercase gap-4 text-sm animate-pulse">
+            <span>[ CONSTRUINDO_MÓDULO : {activeTab} ]</span>
           </div>
         );
       default:

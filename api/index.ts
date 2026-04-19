@@ -83,4 +83,14 @@ app.post(["/trucks", "/api/trucks"], (req, res) => {
 app.get(["/trips", "/api/trips"], (req, res) => res.json(data.trips));
 app.get(["/drivers", "/api/drivers"], (req, res) => res.json(data.drivers));
 
+app.post(["/drivers", "/api/drivers"], (req, res) => {
+  const newDriver = {
+    ...req.body,
+    id: Math.random().toString(36).substring(2, 9),
+    status: req.body.status || "Active"
+  };
+  data.drivers.push(newDriver);
+  res.status(201).json(newDriver);
+});
+
 export default app;
