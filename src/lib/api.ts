@@ -110,5 +110,14 @@ export const api = {
     data.drivers.push(newDriver);
     saveData(data);
     return newDriver;
+  },
+
+  async deleteTruck(id: string): Promise<void> {
+    await delay(400);
+    const data = getData();
+    data.trucks = data.trucks.filter((t: any) => t.id !== id);
+    // Also cleanup related trips and expenses if this were a full DB, 
+    // but for now we just remove the truck
+    saveData(data);
   }
 };

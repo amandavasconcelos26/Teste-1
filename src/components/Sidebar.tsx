@@ -107,14 +107,26 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           "p-4 border-t border-white/5 transition-opacity duration-300",
           !isExpanded ? "opacity-0" : "opacity-100"
         )}>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-900 border border-white/10 overflow-hidden">
-              <img src="https://picsum.photos/seed/commander/100/100" alt="Commander" referrerPolicy="no-referrer" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-slate-900 border border-white/10 overflow-hidden">
+                <img src="https://picsum.photos/seed/amandav/100/100" alt="Commander" referrerPolicy="no-referrer" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-white uppercase tracking-wider">COMANDANTE</span>
+                <span className="text-[8px] font-mono text-slate-500 tracking-tighter">AMANDA</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-white uppercase tracking-wider">COMANDANTE</span>
-              <span className="text-[8px] font-mono text-slate-500 tracking-tighter">AMANDA_LOGS_88</span>
-            </div>
+            
+            <button 
+              onClick={() => {
+                localStorage.removeItem('frota_auth_token');
+                window.location.reload();
+              }}
+              className="text-[8px] font-black tracking-widest uppercase text-rose-500 hover:text-rose-400 p-2 bg-rose-500/10 rounded"
+            >
+              SAIR
+            </button>
           </div>
         </div>
       </div>

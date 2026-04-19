@@ -8,10 +8,18 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import FleetList from './components/FleetList';
 import CrewManagement from './components/CrewManagement';
+import Login from './components/Login';
 import { Search, Bell, User } from 'lucide-react';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = React.useState(
+    localStorage.getItem('frota_auth_token') === 'AUTH_LEVEL_01_APPROVED'
+  );
   const [activeTab, setActiveTab] = React.useState('dashboard');
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {

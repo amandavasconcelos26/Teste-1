@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck as TruckIcon, Save, X, Plus, Zap, Settings, Activity } from 'lucide-react';
+import { Truck as TruckIcon, Save, X, Plus, Zap, Settings, Activity, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatCurrency, formatNumber, cn } from '../lib/utils';
 import { Truck } from '../types';
@@ -9,6 +9,10 @@ export default function FleetList() {
   const [trucks, setTrucks] = React.useState<Truck[]>([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  
+  const [viewingTruckId, setViewingTruckId] = React.useState<string | null>(null);
+
   const [formData, setFormData] = React.useState({
     plaque: '',
     model: '',
@@ -40,6 +44,20 @@ export default function FleetList() {
       console.error("FAILED_TO_REGISTER_ASSET:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("ATENÇÃO: Deseja realmente excluir este ativo operacinal da frota?")) {
+      setDeletingId(id);
+      try {
+        await api.deleteTruck(id);
+        fetchTrucks();
+      } catch (error) {
+        console.error("FAILED_TO_DELETE_ASSET:", error);
+      } finally {
+        setDeletingId(null);
+      }
     }
   };
 
@@ -110,11 +128,24 @@ export default function FleetList() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn">
-                    <Settings size={14} className="text-slate-600 group-hover/btn:text-white" />
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn">
+                  <button 
+                    onClick={() => setViewingTruckId(truck.id)}
+                    className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn"
+                    title="Analisar Ativo"
+                  >
                     <Activity size={14} className="text-slate-600 group-hover/btn:text-white" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(truck.id!)}
+                    disabled={deletingId === truck.id}
+                    className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-rose-600 transition-colors group/btn disabled:opacity-50"
+                    title="Descomissionar Ativo"
+                  >
+                    {deletingId === truck.id ? (
+                      <div className="w-3 h-3 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Trash2 size={14} className="text-slate-600 group-hover/btn:text-white" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -237,6 +268,86 @@ export default function FleetList() {
                   </div>
                 </form>
               </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* View Modal */}
+        {viewingTruckId && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setViewingTruckId(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.95 }}
+              className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 p-12 overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500" />
+              {(() => {
+                const truck = trucks.find(t => t.id === viewingTruckId);
+                if (!truck) return null;
+                const profit = truck.profit || 0;
+                
+                return (
+                  <div className="flex flex-col gap-12 relative z-10">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h2 className="text-xs font-black tracking-[0.5em] text-emerald-500 uppercase mb-2">ANÁLISE_PROFUNDA</h2>
+                        <h3 className="text-3xl font-black text-white tracking-tighter uppercase">{truck.plaque}</h3>
+                      </div>
+                      <button onClick={() => setViewingTruckId(null)} className="text-slate-600 hover:text-white transition-colors">
+                        <X size={24} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white/5 border border-white/10 p-4">
+                        <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase block mb-1">MODELO</span>
+                        <span className="text-sm font-mono text-white">{truck.model}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/10 p-4">
+                        <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase block mb-1">MARCA</span>
+                        <span className="text-sm font-mono text-white">{truck.brand}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/10 p-4">
+                        <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase block mb-1">TIPO</span>
+                        <span className="text-sm font-mono text-white">{truck.type}</span>
+                      </div>
+                      <div className="bg-white/5 border border-white/10 p-4">
+                        <span className="text-[8px] font-black tracking-widest text-slate-500 uppercase block mb-1">KILOMETRAGEM_LÍQUIDA</span>
+                        <span className="text-sm font-mono text-white">{truck.km || 0} KM</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#050505] p-8 border border-white/5">
+                      <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase block mb-6">MÉTRICAS_FINANCEIRAS_DO_ATIVO</span>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                          <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest block mb-2">RECEITA_ACUMULADA</span>
+                          <span className="text-2xl font-black text-white block">{formatCurrency(truck.revenue || 0)}</span>
+                        </div>
+                        <div>
+                          <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest block mb-2">CUSTO_TOTAIS</span>
+                          <span className="text-2xl font-black text-rose-500 block">{formatCurrency(truck.expenses || 0)}</span>
+                        </div>
+                        <div className={cn(
+                          "p-4 border",
+                          profit >= 0 ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-500" : "border-rose-500/20 bg-rose-500/5 text-rose-500"
+                        )}>
+                          <span className="text-[8px] font-bold uppercase tracking-widest block mb-2 opacity-70">LUCRO_LÍQUIDO_FINAL</span>
+                          <span className="text-3xl font-black block leading-none">{formatCurrency(profit)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </motion.div>
           </div>
         )}
