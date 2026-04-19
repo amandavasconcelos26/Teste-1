@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Application user for custom authentication and role-based access",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "status": { "type": "string", "enum": ["active", "blocked"] }
+      },
+      "required": ["username", "password", "role", "status"]
+    },
+    "Truck": {
+      "title": "Truck",
+      "description": "Fleet vehicle",
+      "type": "object",
+      "properties": {
+        "plaque": { "type": "string" },
+        "model": { "type": "string" },
+        "brand": { "type": "string" },
+        "year": { "type": "number" },
+        "type": { "type": "string" },
+        "capacity": { "type": "string" },
+        "status": { "type": "string" },
+        "revenue": { "type": "number" },
+        "expenses": { "type": "number" },
+        "profit": { "type": "number" }
+      },
+      "required": ["plaque", "model", "brand", "status"]
+    },
+    "Driver": {
+      "title": "Driver",
+      "description": "Fleet driver",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "license": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["name", "license", "status"]
+    },
+    "Trip": {
+      "title": "Trip",
+      "description": "Fleet operation trip",
+      "type": "object",
+      "properties": {
+        "tripNumber": { "type": "string" },
+        "truckId": { "type": "string" },
+        "driverId": { "type": "string" },
+        "origin": { "type": "string" },
+        "destination": { "type": "string" },
+        "dateOut": { "type": "string" },
+        "dateIn": { "type": "string" },
+        "kmInitial": { "type": "number" },
+        "kmFinal": { "type": "number" },
+        "freightValue": { "type": "number" },
+        "status": { "type": "string" }
+      },
+      "required": ["tripNumber", "truckId", "status"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Financial expense for a truck/trip",
+      "type": "object",
+      "properties": {
+        "truckId": { "type": "string" },
+        "tripId": { "type": "string" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "value": { "type": "number" }
+      },
+      "required": ["truckId", "category", "value"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Users of the system"
+    },
+    "/trucks/{truckId}": {
+      "schema": { "$ref": "#/entities/Truck" },
+      "description": "Trucks in the fleet"
+    },
+    "/drivers/{driverId}": {
+      "schema": { "$ref": "#/entities/Driver" },
+      "description": "Drivers in the fleet"
+    },
+    "/trips/{tripId}": {
+      "schema": { "$ref": "#/entities/Trip" },
+      "description": "Logistics operations"
+    },
+    "/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Fleet expenses"
+    }
+  }
+}

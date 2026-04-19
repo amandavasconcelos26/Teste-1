@@ -2,18 +2,23 @@ import React from 'react';
 import { Truck, Receipt, Plus, Search, Activity } from 'lucide-react';
 import { Expense } from '../types';
 import { formatCurrency, cn } from '../lib/utils';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export default function Finance() {
   const [expenses, setExpenses] = React.useState<Expense[]>([]);
 
   React.useEffect(() => {
-    const stored = localStorage.getItem('frota_insight_db');
-    if (stored) {
-      setExpenses(JSON.parse(stored).expenses);
+    async function loadData() {
+      const snap = await getDocs(collection(db, 'expenses'));
+      setExpenses(snap.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Expense));
     }
+    loadData();
   }, []);
 
   const totalCusto = expenses.reduce((acc, curr) => acc + curr.value, 0);
+
+  const isAdmin = localStorage.getItem('frota_current_role') === 'admin';
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -22,15 +27,17 @@ export default function Finance() {
           <h1 className="text-[10px] font-black tracking-[0.4em] text-rose-500 uppercase mb-2">CONTROLE DE CAIXA E DESPESAS</h1>
           <h2 className="text-4xl font-black text-white tracking-tighter">FINANCEIRO :: DESPESAS</h2>
         </div>
-        <button 
-          className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-rose-600 hover:text-white transition-all duration-300"
-        >
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500" />
-          <span className="flex items-center gap-3">
-            <Plus size={14} strokeWidth={3} />
-            NOVO LANÇAMENTO
-          </span>
-        </button>
+        {isAdmin && (
+          <button 
+            className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-rose-600 hover:text-white transition-all duration-300"
+          >
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500" />
+            <span className="flex items-center gap-3">
+              <Plus size={14} strokeWidth={3} />
+              NOVO LANÇAMENTO
+            </span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5 mb-8">

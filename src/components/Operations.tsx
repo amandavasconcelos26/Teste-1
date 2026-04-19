@@ -1,19 +1,19 @@
 import React from 'react';
 import { Truck, MapPin, Search } from 'lucide-react';
-import { api } from '../lib/api';
 import { Trip, Driver } from '../types';
 import { formatCurrency, cn } from '../lib/utils';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export default function Operations() {
   const [trips, setTrips] = React.useState<Trip[]>([]);
 
   React.useEffect(() => {
-    // We would fetch distinct trips here, wait, api.ts doesn't have getTrips yet
-    // I will simulate with localStorage getData inline
-    const stored = localStorage.getItem('frota_insight_db');
-    if (stored) {
-      setTrips(JSON.parse(stored).trips);
+    async function loadData() {
+      const snap = await getDocs(collection(db, 'trips'));
+      setTrips(snap.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Trip));
     }
+    loadData();
   }, []);
 
   return (

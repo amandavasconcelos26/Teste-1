@@ -20,14 +20,19 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
+  const isAdmin = localStorage.getItem('frota_current_role') === 'admin';
+
   const menuItems = [
     { id: 'dashboard', label: 'ANÁLISE', icon: LayoutDashboard },
     { id: 'fleet', label: 'FROTA', icon: Truck },
     { id: 'trips', label: 'OPERAÇÕES', icon: MapPin },
     { id: 'drivers', label: 'EQUIPE', icon: Users },
     { id: 'expenses', label: 'FINANCEIRO', icon: Receipt },
-    { id: 'users', label: 'SISTEMA', icon: ShieldAlert },
   ];
+
+  if (isAdmin) {
+    menuItems.push({ id: 'users', label: 'SISTEMA', icon: ShieldAlert });
+  }
 
   return (
     <>

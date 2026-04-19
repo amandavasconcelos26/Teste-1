@@ -24,6 +24,7 @@ export default function Login({ onLogin }: LoginProps) {
       localStorage.setItem('frota_auth_token', 'AUTH_LEVEL_01_APPROVED');
       localStorage.setItem('frota_current_username', user.username);
       localStorage.setItem('frota_current_userid', user.id);
+      localStorage.setItem('frota_current_role', user.role);
       onLogin();
     } catch (err: any) {
       setError('ERRO: CREDENCIAIS INVÁLIDAS OU ACESSO NEGADO');

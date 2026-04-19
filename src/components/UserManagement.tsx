@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Plus, Trash2, KeyRound, User, LockKeyhole } from 'lucide-react';
+import { ShieldAlert, Plus, Trash2, KeyRound, User, LockKeyhole, Ban, CheckCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import { cn } from '../lib/utils';
 
@@ -14,7 +14,8 @@ export default function UserManagement() {
   const [formData, setFormData] = React.useState({
     username: '',
     password: '',
-    role: 'user'
+    role: 'user',
+    status: 'active'
   });
 
   const fetchUsers = React.useCallback(async () => {
@@ -36,7 +37,7 @@ export default function UserManagement() {
     try {
       await api.addUser(formData);
       setIsModalOpen(false);
-      setFormData({ username: '', password: '', role: 'user' });
+      setFormData({ username: '', password: '', role: 'user', status: 'active' });
       fetchUsers();
     } catch (e) {
       console.error(e);
@@ -59,6 +60,15 @@ export default function UserManagement() {
       console.error(e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggleStatus = async (id: string, currentStatus: string) => {
+    try {
+      await api.updateUser(id, { status: currentStatus === 'active' ? 'blocked' : 'active' });
+      fetchUsers();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -107,17 +117,38 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <h3 className="text-lg font-black text-white tracking-tight uppercase truncate">{user.username}</h3>
-                    <div className={cn(
-                      "text-[8px] font-black tracking-[0.2em] px-2 py-0.5 uppercase mt-1 inline-block border",
-                      user.role === 'admin' ? "text-rose-500 border-rose-500/20 bg-rose-500/10" : "text-emerald-500 border-emerald-500/20 bg-emerald-500/10"
-                    )}>
-                      PERFIL: {user.role.toUpperCase()}
+                    <div className="flex gap-2 mt-1">
+                      <span className={cn(
+                        "text-[8px] font-black tracking-[0.2em] px-2 py-0.5 uppercase border",
+                        user.role === 'admin' ? "text-rose-500 border-rose-500/20 bg-rose-500/10" : "text-emerald-500 border-emerald-500/20 bg-emerald-500/10"
+                      )}>
+                        PERFIL: {user.role.toUpperCase()}
+                      </span>
+                      <span className={cn(
+                        "text-[8px] font-black tracking-[0.2em] px-2 py-0.5 uppercase border",
+                        user.status === 'blocked' ? "text-amber-500 border-amber-500/20 bg-amber-500/10" : "text-slate-400 border-white/10 bg-white/5"
+                      )}>
+                        {user.status === 'blocked' ? 'BLOQUEADO' : 'ATIVO'}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
               
               <div className="flex justify-end gap-2 mt-auto pt-4 border-t border-white/5">
+                {user.id !== "1" && ( /* Prevent blocking the main admin */
+                  <button
+                    onClick={() => toggleStatus(user.id, user.status)}
+                    className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-amber-600 transition-colors group/btn"
+                    title={user.status === 'active' ? "Bloquear Acesso" : "Liberar Acesso"}
+                  >
+                    {user.status === 'active' ? (
+                      <Ban size={14} className="text-slate-400 group-hover/btn:text-white" />
+                    ) : (
+                      <CheckCircle size={14} className="text-amber-500 group-hover/btn:text-white" />
+                    )}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setSelectedUserId(user.id);

@@ -61,6 +61,8 @@ export default function FleetList() {
     }
   };
 
+  const isAdmin = localStorage.getItem('frota_current_role') === 'admin';
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-700">
       <div className="flex justify-between items-end border-b border-white/5 pb-8">
@@ -68,16 +70,18 @@ export default function FleetList() {
           <h1 className="text-[10px] font-black tracking-[0.4em] text-rose-500 uppercase mb-2">SISTEMA DE INVENTÁRIO DE ATIVOS</h1>
           <h2 className="text-4xl font-black text-white tracking-tighter">FROTA :: UNIDADES ATIVAS</h2>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-rose-600 hover:text-white transition-all duration-300"
-        >
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500" />
-          <span className="flex items-center gap-3">
-            <Plus size={14} strokeWidth={3} />
-            IMPLANTAR_NOVO_ATIVO
-          </span>
-        </button>
+        {isAdmin && (
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="group relative px-6 py-3 bg-white text-black font-black text-xs tracking-widest uppercase hover:bg-rose-600 hover:text-white transition-all duration-300"
+          >
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500" />
+            <span className="flex items-center gap-3">
+              <Plus size={14} strokeWidth={3} />
+              IMPLANTAR ATIVO
+            </span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5 shadow-2xl">
@@ -140,28 +144,30 @@ export default function FleetList() {
                   >
                     <Activity size={14} className="text-slate-600 group-hover/btn:text-white" />
                   </button>
-                  <button 
-                    onClick={() => {
-                      if (confirmDeleteId === truck.id) {
-                        executeDelete(truck.id!);
-                      } else {
-                        setConfirmDeleteId(truck.id!);
-                        setTimeout(() => setConfirmDeleteId(null), 3000);
-                      }
-                    }}
-                    disabled={deletingId === truck.id}
-                    className={cn(
-                      "w-8 h-8 flex items-center justify-center transition-colors group/btn disabled:opacity-50",
-                      confirmDeleteId === truck.id ? "bg-rose-600 text-white" : "bg-white/5 hover:bg-rose-600"
-                    )}
-                    title="Descomissionar Ativo"
-                  >
-                    {deletingId === truck.id ? (
-                      <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      confirmDeleteId === truck.id ? <AlertTriangle size={14} /> : <Trash2 size={14} className={cn("text-slate-600 group-hover/btn:text-white")} />
-                    )}
-                  </button>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => {
+                        if (confirmDeleteId === truck.id) {
+                          executeDelete(truck.id!);
+                        } else {
+                          setConfirmDeleteId(truck.id!);
+                          setTimeout(() => setConfirmDeleteId(null), 3000);
+                        }
+                      }}
+                      disabled={deletingId === truck.id}
+                      className={cn(
+                        "w-8 h-8 flex items-center justify-center transition-colors group/btn disabled:opacity-50",
+                        confirmDeleteId === truck.id ? "bg-rose-600 text-white" : "bg-white/5 hover:bg-rose-600"
+                      )}
+                      title="Descomissionar Ativo"
+                    >
+                      {deletingId === truck.id ? (
+                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        confirmDeleteId === truck.id ? <AlertTriangle size={14} /> : <Trash2 size={14} className={cn("text-slate-600 group-hover/btn:text-white")} />
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
