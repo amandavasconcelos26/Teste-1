@@ -17,6 +17,7 @@ interface SidebarProps {
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'ANÁLISE', icon: LayoutDashboard },
@@ -28,14 +29,15 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   ];
 
   return (
-    <div 
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] border-r border-white/5 bg-black/40 backdrop-blur-xl group hidden lg:block",
-        isExpanded ? "w-64" : "w-16"
-      )}
-    >
+    <>
+      <div 
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] border-r border-white/5 bg-black/80 backdrop-blur-xl group hidden lg:block",
+          isExpanded ? "w-64" : "w-16"
+        )}
+      >
       <div className="h-full flex flex-col">
         {/* Brand */}
         <div className="h-16 flex items-center px-4 border-b border-white/5">
@@ -117,5 +119,30 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         </div>
       </div>
     </div>
+
+    {/* Mobile Bottom Navigation */}
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#050505]/90 backdrop-blur-xl border-t border-white/10 pb-safe">
+      <div className="flex items-center justify-around p-2">
+        {menuItems.slice(0, 4).map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={cn(
+                "flex flex-col items-center justify-center p-2 rounded-lg min-w-[64px]",
+                isActive ? "text-rose-500" : "text-slate-500"
+              )}
+            >
+              <Icon size={20} className="mb-1" />
+              <span className="text-[8px] font-black tracking-widest">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  </>
   );
 }
